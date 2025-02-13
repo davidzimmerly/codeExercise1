@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -41,7 +42,6 @@ android {
 }
 
 dependencies {
-    ksp(libs.moshi.ksp)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -53,9 +53,15 @@ dependencies {
     implementation(libs.logging.interceptor)
 
     implementation(libs.retrofit)
+    ksp(libs.moshi.ksp)
     implementation(libs.moshi)
     implementation(libs.moshi.converter)
     implementation(libs.kotlinx.coroutines.android)
+
+    implementation(libs.hilt)
+    implementation(libs.hiltNavigationCompose)
+    ksp(libs.hiltCompiler)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

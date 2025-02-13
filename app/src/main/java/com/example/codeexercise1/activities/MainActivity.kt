@@ -15,7 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.codeexercise1.composables.ItemScreen
 import com.example.codeexercise1.ui.theme.CodeExercise1Theme
 import com.example.codeexercise1.viewModel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()

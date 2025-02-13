@@ -1,6 +1,6 @@
 [versions]
 agp = "8.8.0"
-kotlin = "2.0.0"
+kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -12,6 +12,7 @@ moshiKsp = "1.15.2"
 retrofitVersion = "2.11.0"
 moshiVersion = "1.15.2"
 hiltVersion = "2.51.1"
+hiltNavVersion = "1.2.0"
 activityCompose = "1.10.0"
 composeBom = "2025.02.00"
 kspVersion = "2.0.21-1.0.27"
@@ -37,8 +38,9 @@ moshi-ksp = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 moshi = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiVersion" }
 moshi-converter = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofitVersion" }
-hilt = { module = "com.google.dagger:hilt.android", version.ref = "hiltVersion" }
+hilt = { module = "com.google.dagger:hilt-android", version.ref = "hiltVersion" }
 hiltCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltVersion" }
+hiltNavigationCompose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
