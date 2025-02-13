@@ -3,7 +3,8 @@ package com.example.codeexercise1.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.codeexercise1.util.retrofit.RetrofitInstance.apiService
+import com.example.codeexercise1.db.ItemsDao
+import com.example.codeexercise1.util.retrofit.ApiService
 import com.example.codeexercise1.util.serviceObjects.Item
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(private val itemsDao: ItemsDao, private val apiService: ApiService) : ViewModel() {
     private val _items = MutableStateFlow<List<Item>>(emptyList())
     val items: StateFlow<List<Item>> = _items.asStateFlow()
 
