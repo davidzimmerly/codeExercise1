@@ -6,8 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ItemsDao {
-    @Query("SELECT * FROM items")
-    fun getAll(): Flow<List<ItemEntity>>
+    @Query("""
+        SELECT * FROM items  
+        ORDER BY list_id ASC, name ASC
+    """)
+    fun getAllSorted(): Flow<List<ItemEntity>>
 
     @Insert
     fun insertAll(items: List<ItemEntity>)

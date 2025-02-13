@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CodeExercise1Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ItemScreen(modifier = Modifier.padding(innerPadding), viewModel = viewModel)
+                    ItemScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
