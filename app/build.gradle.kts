@@ -39,6 +39,13 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes.add("META-INF/LICENSE-notice.md")
+            excludes.add("META-INF/LICENSE.md")
+        }
+    }
+
 }
 
 dependencies {
@@ -74,6 +81,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.kotlinx.coroutines.android)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

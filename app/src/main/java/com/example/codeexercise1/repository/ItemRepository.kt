@@ -52,29 +52,31 @@ class ItemRepository @Inject constructor(
                     .map { it.toDomain() }  // Convert each entity to domain model first
                     .groupBy { it.listId }  // Then group them by listId
                     .mapValues { (_, items) ->
-                        items.sortedWith(compareBy<Item> { extractNumber(it.name!!) } //TODO remove !!
+                        items.sortedWith(compareBy<Item> { extractNumber(it.name) }
                             .thenBy { it.name })  // Sort items within each group
                     }
             }
 
 
-    private suspend fun fetchItemsFromApi() {
-        try {
-            val response = apiService.getJson()
-            if (response.isSuccessful) {
-                val items = response.body() ?: emptyList()
-                itemsDao.deleteAll()
-                val filteredItems = items.filter { !it.name.isNullOrBlank() }
-                itemsDao.insertAll(filteredItems.map { it.toEntity() })
+    private suspend fun fetchItemsFromApi() =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = apiService.getJson()
+                if (response.isSuccessful) {
+                    val items = response.body() ?: emptyList()
+                    itemsDao.deleteAll()
+                    val filteredItems = items.filter { !it.name.isNullOrBlank() }
+                    itemsDao.insertAll(filteredItems.map { it.toEntity() })
 
-            } else {
-                Log.e("API Error", "Response Code: ${response.code()}")
+                } else {
+                    Log.e("API Error", "Response Code: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("API Exception", "Error fetching data", e)
             }
-        } catch (e: Exception) {
-            Log.e("API Exception", "Error fetching data", e)
         }
-    }
 
-    private fun extractNumber(s: String) = s.filter { it.isDigit() }.toIntOrNull()
+
+    private fun extractNumber(s: String?) = s?.filter { it.isDigit() }?.toIntOrNull()
 
 }

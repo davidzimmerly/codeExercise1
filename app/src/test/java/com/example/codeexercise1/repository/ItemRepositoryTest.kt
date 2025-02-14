@@ -20,8 +20,10 @@ import retrofit2.Response
 class ItemRepositoryTest {
 
     private lateinit var itemRepository: ItemRepository
-    @MockK private lateinit var apiService: ApiService
-    @MockK private lateinit var itemsDao: ItemsDao
+    @MockK
+    private lateinit var apiService: ApiService
+    @MockK
+    private lateinit var itemsDao: ItemsDao
 
     val itemEntities = listOf(
         ItemEntity(id = 2, listId = 1, name = "Item 10"),
@@ -45,7 +47,10 @@ class ItemRepositoryTest {
 
         val results = itemRepository.getItems().toList()
 
-        // sorting by just name yielded stuff like Item 10, Item 2, Item 30, so I took extra step here to sort by number
+        // sorting by just name yielded stuff like Item 10, Item 2, Item 30, so I took extra step
+        // here to sort by number inside too
+        // noticed the non null names' included ids seem to match the id integer, but felt that was cheating
+        // since you said sort by name :)
         assertEquals(
             mapOf(
                 1 to listOf(
