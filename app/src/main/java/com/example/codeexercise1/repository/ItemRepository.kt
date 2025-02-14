@@ -38,7 +38,7 @@ class ItemRepository @Inject constructor(
     private fun Item.toEntity(): ItemEntity = ItemEntity(
         id = id,
         listId = listId,
-        name = name ?: "" //TODO filter for nulls before insertion
+        name = name ?: ""
     )
 
     // we don't expect the json to change, but in real world would check TTL or set a value
