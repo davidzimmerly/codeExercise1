@@ -6,9 +6,8 @@ import com.example.codeexercise1.db.ItemsDao
 import com.example.codeexercise1.util.retrofit.ApiService
 import com.example.codeexercise1.util.serviceObjects.Item
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -17,17 +16,19 @@ class ItemRepository @Inject constructor(
     private val apiService: ApiService,
     private val itemsDao: ItemsDao
 ) {
+    private val _items = MutableSharedFlow<List<Item>>(replay = 1)
+    val items: SharedFlow<List<Item>> = _items
 
-    fun getItems(): Flow<Map<Int, List<Item>>> = flow {
-        if (!shouldFetchFromDb()) {
-            fetchItemsFromApi()
-        }
-        emitAll(
-            withContext(Dispatchers.IO) {
-                fetchItemsFromDb()
+
+    suspend fun updateItems(): Unit =
+        withContext(Dispatchers.IO) {
+            if (!shouldFetchFromDb()) {
+                fetchItemsFromApi()
             }
-        )
-    }
+            fetchItemsFromDb().collect {
+                _items.tryEmit(it)
+            }
+        }
 
     private fun ItemEntity.toDomain(): Item = Item(
         id = id,
@@ -45,17 +46,8 @@ class ItemRepository @Inject constructor(
     private suspend fun shouldFetchFromDb() =
         withContext(Dispatchers.IO) { return@withContext itemsDao.countItems() > 0 }
 
-    private fun fetchItemsFromDb(): Flow<Map<Int, List<Item>>> =
-        itemsDao.getAllSorted()
-            .map { items ->
-                items.asSequence()  // Use sequences for more efficient transformations on larger datasets
-                    .map { it.toDomain() }  // Convert each entity to domain model first
-                    .groupBy { it.listId }  // Then group them by listId
-                    .mapValues { (_, items) ->
-                        items.sortedWith(compareBy<Item> { extractNumber(it.name) }
-                            .thenBy { it.name })  // Sort items within each group
-                    }
-            }
+    private fun fetchItemsFromDb() =
+        itemsDao.getAllSorted().map { list -> list.map { it.toDomain() } }
 
 
     private suspend fun fetchItemsFromApi() =
@@ -65,8 +57,7 @@ class ItemRepository @Inject constructor(
                 if (response.isSuccessful) {
                     val items = response.body() ?: emptyList()
                     itemsDao.deleteAll()
-                    val filteredItems = items.filter { !it.name.isNullOrBlank() }
-                    itemsDao.insertAll(filteredItems.map { it.toEntity() })
+                    itemsDao.insertAll(items.map { it.toEntity() })
 
                 } else {
                     Log.e("API Error", "Response Code: ${response.code()}")
@@ -76,7 +67,5 @@ class ItemRepository @Inject constructor(
             }
         }
 
-
-    private fun extractNumber(s: String?) = s?.filter { it.isDigit() }?.toIntOrNull()
 
 }

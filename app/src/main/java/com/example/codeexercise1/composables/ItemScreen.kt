@@ -13,7 +13,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -25,16 +28,19 @@ import com.example.codeexercise1.viewModel.MainViewModel
 @Composable
 fun ItemScreen(
     modifier: Modifier,
-    viewModel: MainViewModel = hiltViewModel<MainViewModel>(),
+    viewModel: MainViewModel = hiltViewModel<MainViewModel>()
 ) {
+    val shouldFilter = remember { mutableStateOf(false) }
+    val shouldSort = remember { mutableStateOf(false) }
     val itemsState = viewModel.items.collectAsState(emptyMap())
-    ItemListView(modifier = modifier, items = itemsState.value)
-}
 
-@Composable
-fun ItemListView(modifier: Modifier, items: Map<Int, List<Item>>) {
+    LaunchedEffect(key1 = true) {
+        viewModel.shouldFilter.collect { shouldFilter.value = it }
+        viewModel.shouldSort.collect { shouldSort.value = it }
+    }
+
     LazyColumn(modifier = modifier) {
-        items.forEach { (listId, itemList) ->
+        itemsState.value.forEach { (listId, itemList) ->
             item {
                 Text(
                     text = "List ID: $listId",
